@@ -1,0 +1,7 @@
+mohawk.sublime-workspace
+mohawk.sublime-project
+node_modules
+INBOX/*
+OUTBOX/*
+util/ftp.js
+util/thinky.js

@@ -1,0 +1,24 @@
+{
+  "name": "mohawk-ftp-cli",
+  "version": "1.0.0",
+  "description": "Client for Mohawk Industries EDI ftp mode.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://bitbucket.org/dkran/mohawk"
+  },
+  "keywords": [
+    "Mohawk",
+    "EDI",
+    "ftp"
+  ],
+  "author": "Daryl Kranec",
+  "license": "ISC",
+  "dependencies": {
+    "ftp": "^0.3.10",
+    "thinky": "^2.2.4"
+  }
+}
