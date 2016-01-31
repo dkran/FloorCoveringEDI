@@ -18,7 +18,9 @@
   "author": "Daryl Kranec",
   "license": "ISC",
   "dependencies": {
-    "ftp": "^0.3.10",
+    "async": "^1.5.2",
+    "edi": "^1.1.0",
+    "jsftp": "^1.5.3",
     "thinky": "^2.2.4"
   }
 }
