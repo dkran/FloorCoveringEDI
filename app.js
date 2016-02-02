@@ -44,6 +44,8 @@ gatherFiles(remote).then(function(files){
     console.log('updates complete' + res)
     
   })
+  var msg = new EDI()
+  test = msg.bsegments()
 })
 
 
