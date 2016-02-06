@@ -42,16 +42,28 @@ gatherFiles(remote).then(function(files){
         console.log(err)
       }
       console.log('updates complete' + res)
-      ftp.end()
+      quit().then(function(data){
+      console.log('goodbye!' + data)
+    })
     })
   }else{
     console.log('nothing to update')
-    ftp.end()
+    quit().then(function(data){
+      console.log('goodbye: ' + inspect(data))
+    })
   }
 
 })
 
-
+function quit(){
+  return new Promise(function(resolve, reject){
+    ftp.raw.quit(function(err, data){
+      if (err) reject(err)
+      
+      resolve(data)
+    })
+  })
+}
 
 
 
