@@ -5,4 +5,7 @@ var edi = new EDI()
 
 edi.loadData('EDI/mohawk/OUTBOX/000000024.856')
 
-console.log(edi.getSegment())
+//console.log('Lines: \r'+edi.lines)
+//console.log('Segments: \r'+edi.segments)
+
+edi.getObject()
