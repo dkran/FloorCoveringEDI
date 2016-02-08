@@ -4,7 +4,7 @@ var fs = require('fs'),
  var EDI = function(){
    this.data = ''
    this.lines = []
-   this.segments = []
+   this.segments = ['fuck']
  }
  EDI.prototype.loadData = function(string){
    this.data = fs.readFileSync(string, 'utf8')
@@ -17,14 +17,19 @@ var fs = require('fs'),
  }
  
  EDI.prototype.getSegment = function(){
+   var thing = []
    var i = 0;
    var self = this;
    this.lines.forEach(function(line){
-     while(line[i] !== '*'){
-       self.segments[i].push(line[i]) 
+     while(line[i] !== undefined){
+       console.log(line[i])
+       if(line[i] === '*') break;
+       thing[i] = line[i]
        i++
      }
    })
+   console.log(thing)
+   console.log(this.segments)
    return this.segments
  }
  
