@@ -4,14 +4,15 @@ var _ = require('lodash'),
   fs = require('fs'),
   inspect = require('util').inspect;
 
+module.exports.parse = processLine
+module.exports.test = test
+
 var filter = {};
 
 var filterFiles = fs.readdirSync('edi-parser/parsers/keys/')
 filterFiles.forEach(function(file){
   filter[file.replace('.js', '')] = require('./keys/' + file.replace('.js', ''))
 })
-
-console.log(filter)
 
 function processLine(line, key){
   if(filter[key]){
@@ -33,8 +34,7 @@ function processLine(line, key){
   
 }
 
-module.exports.parse = processLine
-module.exports.test = function(key){
+function test(key){
   if(filter[key]){
     return true
   }else{
