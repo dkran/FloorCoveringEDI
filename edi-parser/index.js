@@ -1,5 +1,5 @@
 var fs = require('fs'),
-  parse = require('./parsers/'),
+  parser = require('./parsers/'),
   inspect = require('util').inspect,
   _ = require('lodash');
  
@@ -13,7 +13,6 @@ var fs = require('fs'),
  EDI.prototype.loadData = function(string){
    this.file = fs.readFileSync(string, 'utf8')
    this.getLines()
-   console.log(this.segments)
  }
  
  EDI.prototype.getLines = function(){
@@ -23,7 +22,7 @@ var fs = require('fs'),
      this.segments[i] += this.getSegment(this.lines[i])
    }
  }
- 
+
  EDI.prototype.getSegment = function(line){
   if(line){
    return line.split('*')[0].trim()
@@ -33,8 +32,11 @@ var fs = require('fs'),
  }
  
  EDI.prototype.getObject = function(){
-   this.object[this.segments[0]] = parse(this.lines[0], this.segments[0])
-   this.object[this.segments[1]] = parse(this.lines[1], this.segments[1])
+   for(var i=0; i<this.lines.length; i++){
+     if(parser.test(this.segments[i])){
+      this.object[this.segments[i]] = parser.parse(this.lines[i], this.segments[i])     
+     }
+   }
    console.log(this.object)
  }
  
