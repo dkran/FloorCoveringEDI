@@ -3,7 +3,7 @@ var EDI = require('./edi-parser')
 
 var edi = new EDI()
 
-edi.loadData('EDI/mohawk/OUTBOX/000000024.856')
+edi.loadData('EDI/mohawk/OUTBOX/000000045.832')
 
 //console.log('Lines: \r'+edi.lines)
 //console.log('Segments: \r'+edi.segments)
