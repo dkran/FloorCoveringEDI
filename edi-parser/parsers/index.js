@@ -1,55 +1,36 @@
 'use strict'
 
-var _ = require('lodash');
+var _ = require('lodash'),
+  inspect = require('util').inspect;
 
 module.exports = {
   ISA: processISA
 }
-
-function processISA(line){
-  console.log(line.length)
-  var ISA = {},
-      length = line.length,
-      i = 0;
-  function trim(amount){
-    line = line.substr(amount)
-    i += amount
-  }
-  trim(4)
+var names = ['auth',
+            'authInfo',
+            'security',
+            'secInfo',
+            'sender',
+            'senderId',
+            'receiver',
+            'receiverId',
+            'date',
+            'time',
+            'standard',
+            'version',
+            'controlNumber',
+            'ackReq',
+            'usageType'];
   
-  function next(){
-    var pair = {}
-    var key = getSection(line)
-    trim(key.length+1)
-    var value = getSection(line)
-    trim(value.length+1)
-    pair[key] = value.trim()
-    if(value.trim() === ''){
-      return null
-    }else{
-      return pair
+function processISA(line){
+  var ISA = {},
+      segments = line.split('*').splice(1);
+  if(segments[segments.length-1] !== ':'){ 
+    throw new TypeError('Not an ISA Line') 
+  }else{
+    for(var i=0, j=segments.length-1; i<j; i++){
+      ISA[names[i]] = segments[i].trim()
     }
-    
-    
   }
-  while(i <= length){
-      _.merge(ISA, next())
-  }
-  console.log(ISA)
   return ISA
 }
-
-function getSection(line){
-  if(line){
-   var section = '';
-   for(var i = 0; i<line.length; i++){
-     if(line[i] === '*') break;
-     section += line[i] 
-   }
-   return section
-  } else{
-    return 'No line given'
-  }
- }
-
-
