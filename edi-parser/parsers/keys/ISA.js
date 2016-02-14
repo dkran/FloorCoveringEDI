@@ -12,4 +12,5 @@ module.exports = ['auth',
                   'version',
                   'controlNumber',
                   'ackReq',
-                  'usageType']
+                  'usageType',
+                  'termination']

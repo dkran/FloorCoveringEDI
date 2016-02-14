@@ -1,5 +1,6 @@
 var fs = require('fs'),
   parser = require('./parsers/'),
+  processor = require('./processor'),
   inspect = require('util').inspect,
   _ = require('lodash');
  
@@ -9,7 +10,7 @@ var fs = require('fs'),
    this.lines = []
    this.segments = []
    this.transactionalSets = []
-   this.functionalGroups = [] 
+   this.functionalGroups = []
    this.object = {
      invoices: [],
      salesCatalog: [],
@@ -19,9 +20,10 @@ var fs = require('fs'),
  EDI.prototype.loadData = function(string){
    this.file = fs.readFileSync(string, 'utf8')
    this.getLines()
+   this.getHeaders()
    this.getFunctionalGroups()
    this.getSets()
-   
+   processGroups(this.lines, this.functionalGroups)
  }
  
  EDI.prototype.getLines = function(){
@@ -41,29 +43,61 @@ var fs = require('fs'),
  }
  
  EDI.prototype.getObject = function(){
-   for(var i=0; i<this.lines.length; i++){
-     if(parser.test(this.segments[i])){
-      this.object[this.segments[i]] = parser.parse(this.lines[i], this.segments[i])     
-     }
-   }
    console.log(this.object)
  }
  
  
  EDI.prototype.getSets = function(){
+   var count = 0, started = false;
    for(var i = 0; i < this.lines.length; i++){
-     if(this.lines[i].split('*')[0].trim() === 'ST' || this.lines[i].split('*')[0].trim() === 'SE'){
-       this.transactionalSets.push(i)
+     if((this.lines[i].split('*')[0].trim() === 'ST') && (started === false)){
+       this.transactionalSets[count] = {}
+       this.transactionalSets[count].start = i
+       started = true
+     }else if((this.lines[i].split('*')[0].trim() === 'SE') && (started === true)){
+       this.transactionalSets[count].end = i
+       started = false
+       count++
      }
    }
  }
  EDI.prototype.getFunctionalGroups = function(){
+   var count = 0, started = false;
    for(var i = 0; i < this.lines.length; i++){
-     if(this.lines[i].split('*')[0].trim() === 'GS' || this.lines[i].split('*')[0].trim() === 'GE'){
-       this.functionalGroups.push(i)
+     if((this.lines[i].split('*')[0].trim() === 'GS') && (started === false)){
+       this.functionalGroups[count] = {}
+       this.functionalGroups[count].start = i
+       started = true
+     }else if(( this.lines[i].split('*')[0].trim() === 'GE') && (started === true)){
+       this.functionalGroups[count].end = i
+       started = false
+       count++
      }
    }
-   console.log(this.functionalGroups)
- }
+   if(started === true) {console.log('fuck only started! ')}
+}
+ 
+EDI.prototype.getHeaders = function(){
+  var started = false, ended = false;
+  this.object.headers = {}
+  for(var i = 0; i < this.lines.length; i++){
+     if((this.lines[i].split('*')[0].trim() === 'ISA') && (started === false)){
+       started = true
+       this.object.headers.ISA = parser.parse(this.lines[i], this.segments[i])
+     }else if((this.lines[i].split('*')[0].trim() === 'IEA') && (started === true)){
+       this.object.headers.IEA = parser.parse(this.lines[i], this.segments[i])
+       ended = true
+     }
+  }
+  if(!(this.object.headers.ISA && this.object.headers.IEA)){
+    console.log('didnt start and end')
+  }
+}
 
+function processGroups(lines, groups){
+  for(var i=0; i<groups.length; i++){
+    //Add one because we need the GE line.
+    processor(lines.splice(groups[i].start, (groups[i].end - groups[i].start+1)))
+  }
+}
  module.exports = EDI
