@@ -8,6 +8,8 @@ var fs = require('fs'),
    this.file = ''
    this.lines = []
    this.segments = []
+   this.transactionalSets = []
+   this.functionalGroups = [] 
    this.object = {
      invoices: [],
      salesCatalog: [],
@@ -17,7 +19,9 @@ var fs = require('fs'),
  EDI.prototype.loadData = function(string){
    this.file = fs.readFileSync(string, 'utf8')
    this.getLines()
+   this.getFunctionalGroups()
    this.getSets()
+   
  }
  
  EDI.prototype.getLines = function(){
@@ -47,12 +51,19 @@ var fs = require('fs'),
  
  
  EDI.prototype.getSets = function(){
-   var sets = []
    for(var i = 0; i < this.lines.length; i++){
      if(this.lines[i].split('*')[0].trim() === 'ST' || this.lines[i].split('*')[0].trim() === 'SE'){
-       sets.push(i)
+       this.transactionalSets.push(i)
      }
    }
-   console.log(sets)
  }
+ EDI.prototype.getFunctionalGroups = function(){
+   for(var i = 0; i < this.lines.length; i++){
+     if(this.lines[i].split('*')[0].trim() === 'GS' || this.lines[i].split('*')[0].trim() === 'GE'){
+       this.functionalGroups.push(i)
+     }
+   }
+   console.log(this.functionalGroups)
+ }
+
  module.exports = EDI
