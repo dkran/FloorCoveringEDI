@@ -1,2 +1,2 @@
-module.exports = ['one',
-                  'two']
+module.exports = ['identifier',
+                  'controlNumber']

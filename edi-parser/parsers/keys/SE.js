@@ -1,0 +1,2 @@
+module.exports = ['includedSegments',
+                  'controlNumber']
