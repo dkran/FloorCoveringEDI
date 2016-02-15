@@ -6,6 +6,9 @@ var _ = require('lodash'),
 
 module.exports.parse = processLine
 module.exports.test = test
+module.exports.helpers = {
+  getSegment: getSegment
+}
 
 var filter = {};
 
@@ -32,6 +35,10 @@ function processLine(line, key){
     return null
   }
   
+}
+
+function getSegment(line){
+  return line.split('*')[0].trim()
 }
 
 function test(key){
