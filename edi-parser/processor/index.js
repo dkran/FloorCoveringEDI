@@ -11,9 +11,8 @@ var group = {}
 
 function processGroup(data){
   initialize(data)
-  console.log(processors)
-  console.log(group.info.GS.transactionCode)
-  processors[group.info.GS.transactionCode](data.splice(1, data.length-2), transactionalSets)
+  processors[group.info.GS.transactionCode](data.splice(1, data.length-2), transactionalSets, group.info.GS.transactionCode)
+  console.log(group)
 }
 
 function initialize(data){
