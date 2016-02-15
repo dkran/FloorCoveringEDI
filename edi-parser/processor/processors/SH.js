@@ -8,9 +8,11 @@ function processManifest(data){
   var transactionalSets = getSets(data, 'ST', 'SE');
   var setArray = separate(data, transactionalSets)
   var transactions = [];
+  console.log(transactionalSets)
   for(var i=0; i<setArray.length; i++){
+    var headerLines = ['ST', 'SE', 'DTM', 'BSN']
     transactions[i] = {}
-    transactions[i].headers = getLines(setArray[i], ['ST', 'SE', 'DTM', 'BSN'])
+    transactions[i].headers = getLines(setArray[i], headerLines)
   }
   console.log(inspect(transactions, {depth: 3, colors: true}))
 }
