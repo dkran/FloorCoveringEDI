@@ -6,15 +6,29 @@ module.exports = processManifest
 
 function processManifest(data){
   var transactionalSets = getSets(data, 'ST', 'SE');
-  var setArray = separate(data, transactionalSets)
+  var separatedSets = separate(data, transactionalSets)
   var transactions = [];
-  console.log(transactionalSets)
-  for(var i=0; i<setArray.length; i++){
+  for(var i=0; i<separatedSets.length; i++){
     var headerLines = ['ST', 'SE', 'DTM', 'BSN']
     transactions[i] = {}
-    transactions[i].headers = getLines(setArray[i], headerLines)
+    transactions[i].headers = getLines(separatedSets[i], headerLines)
   }
-  console.log(inspect(transactions, {depth: 3, colors: true}))
+  getHeirarchies(separatedSets)
+}
+
+function getHeirarchies(separatedSets){
+  var newTransactions = [];
+  var currentType = '', currentId = '';
+  for (var i = 0;i<separatedSets.length; i++){
+    for(var j=0;j<separatedSets[i].length; j++){
+      if(separatedSets[i][j].split('*')[0].trim() === 'HL'){
+        console.log(separatedSets[i][j])
+        console.log(separatedSets[i][j+1])
+      }
+    }
+    
+  }
+  console.log(inspect(newTransactions, {depth: 3}))
 }
 
 function separate(data, sets){
@@ -34,15 +48,21 @@ function getSets(data, start, end){
        sets[count] = {}
        sets[count].start = i
        started = true
-     }else if((data[i].split('*')[0].trim() === end) && (started === true)){
-       sets[count].end = i
+     }else if((data[i].split('*')[0].trim() === end) && (started === true) && (i !== sets[count].start)){
+       if(data[i].split('*')[0].trim() === 'HL'){
+         sets[count].end = i-1
+       }else{
+         sets[count].end = i         
+       }
        started = false
        count++
      }
    }
+   if(started !== false){
+     throw new Error('Improper Completion')
+   }
    return sets
 }
-
 
 // Filters a chunk of data line by line, and uses the array in the lines variable to process only those that are in the array.  Will
 // Return an object with the proper code
@@ -56,4 +76,10 @@ function getLines(data, lines){
     }
   }
   return processed
+}
+
+function getType(line){
+  if(!line.split('*').trim()){
+    
+  }
 }
