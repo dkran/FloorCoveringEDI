@@ -1,5 +1,5 @@
-module.exports = ['hLevel',
-                  'shipmentId',
+module.exports = ['id',
+                  'parentId',
                   'levelCode',
                   'time',
                   'heirarchyCode']
