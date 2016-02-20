@@ -6,9 +6,7 @@ var _ = require('lodash'),
 
 module.exports.parse = processLine
 module.exports.test = test
-module.exports.helpers = {
-  getSegment: getSegment
-}
+module.exports.getSegment = getSegment
 
 var filter = {};
 
@@ -17,7 +15,8 @@ filterFiles.forEach(function(file){
   filter[file.replace('.js', '')] = require('./keys/' + file.replace('.js', ''))
 })
 
-function processLine(line, key){
+function processLine(line){
+  var key = line.split('*')[0].trim()
   if(filter[key]){
     var slice = {},
       segments = line.split('*').splice(1);
@@ -41,7 +40,8 @@ function getSegment(line){
   return line.split('*')[0].trim()
 }
 
-function test(key){
+function test(data){
+  var key = data.split('*')[0].trim();
   if(filter[key]){
     return true
   }else{
