@@ -15,8 +15,8 @@ function processGroup(data){
 
 function initialize(data){
   group.info = {}
-  group.info['GS'] = parser.parse(data[0], 'GS')
-  group.info['GE'] = parser.parse(data[data.length-1], 'GE')
+  group.info['GS'] = parser.parse(data[0])
+  group.info['GE'] = parser.parse(data[data.length-1])
 }
 
 module.exports = processGroup
