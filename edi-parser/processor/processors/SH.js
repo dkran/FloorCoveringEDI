@@ -18,12 +18,12 @@ function processManifest(data){
 
 function getHeirarchies(separatedSets){
   var newTransactions = [];
-  var currentType = '', currentId = '';
+  var currentType = '', currentTransaction = '';
   for (var i = 0;i<separatedSets.length; i++){
     for(var j=0;j<separatedSets[i].length; j++){
-      if(separatedSets[i][j].split('*')[0].trim() === 'HL'){
-        console.log(separatedSets[i][j])
-        console.log(separatedSets[i][j+1])
+      if(parser.getSegment(separatedSets[i][j]) === 'HL'){
+        console.log(parser.parse(separatedSets[i][j]))
+        console.log(parser.parse(separatedSets[i][j+1]))
       }
     }
     
@@ -44,12 +44,12 @@ function getSets(data, start, end){
   var sets = []
   var count = 0, started = false;
    for(var i = 0; i < data.length; i++){
-     if((data[i].split('*')[0].trim() === start) && (started === false)){
+     if((parser.test(data[i]) === start) && (started === false)){
        sets[count] = {}
        sets[count].start = i
        started = true
      }else if((data[i].split('*')[0].trim() === end) && (started === true) && (i !== sets[count].start)){
-       if(data[i].split('*')[0].trim() === 'HL'){
+       if(parser.getSegment(data[i]) === 'HL'){
          sets[count].end = i-1
        }else{
          sets[count].end = i         
@@ -71,7 +71,7 @@ function getLines(data, lines){
   for(var i=0;i<data.length;i++){
     if(lines.indexOf(data[i].split('*')[0].trim()) >= 0){
       if(parser.test(data[i].split('*')[0].trim())){
-        processed[data[i].split('*')[0].trim()] = parser.parse(data[i], data[i].split('*')[0].trim())
+        processed[data[i].split('*')[0].trim()] = parser.parse(data[i])
       }
     }
   }
