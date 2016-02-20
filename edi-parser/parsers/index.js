@@ -16,28 +16,36 @@ filterFiles.forEach(function(file){
 })
 
 function processLine(line){
-  var key = line.split('*')[0].trim()
-  if(filter[key]){
-    var slice = {},
-      segments = line.split('*').splice(1);
-    if(line.split('*')[0] !== key){ 
-      throw new TypeError('Not valid '+ key +'  line') 
-    }else{
-    for(var i=0, j=segments.length; i<j; i++){
-      if(filter[key]){
-        slice[filter[key][i]] = segments[i].trim()        
+  if(!(line === '') || !(line === undefined)){
+    var key = line.split('*')[0].trim()
+    if(filter[key]){
+      var slice = {},
+        segments = line.split('*').splice(1);
+      if(line.split('*')[0] !== key){ 
+        throw new TypeError('Not valid '+ key +'  line') 
+      }else{
+      for(var i=0, j=segments.length; i<j; i++){
+        if(filter[key]){
+          slice[filter[key][i]] = segments[i].trim()        
+        }
       }
+      return slice
+      }
+    }else {
+      return null
     }
-    return slice
-    }
-  }else {
+  }else{
     return null
   }
-  
 }
 
 function getSegment(line){
-  return line.split('*')[0].trim()
+  if(line && (line !== '')){
+    return line.split('*')[0].trim()
+  }else{
+    return null
+  }
+
 }
 
 function test(data){

@@ -1,8 +1,10 @@
 var parser = require('../../parsers'),
   inspect = require('util').inspect,
+  _ = require('lodash'),
   items = [];
 
 module.exports = processManifest
+
 
 function processManifest(data){
   var transactionalSets = getSets(data, 'ST', 'SE');
@@ -18,17 +20,58 @@ function processManifest(data){
 
 function getHeirarchies(separatedSets){
   var newTransactions = [];
-  var currentType = '', currentTransaction = '';
+  var currentType = '', currentTransaction, currentOrder, currentPack, currentItem;
+  var orderNum = 0, packNum = 0, itemNum = 0;
   for (var i = 0;i<separatedSets.length; i++){
     for(var j=0;j<separatedSets[i].length; j++){
       if(parser.getSegment(separatedSets[i][j]) === 'HL'){
-        console.log(parser.parse(separatedSets[i][j]))
-        console.log(parser.parse(separatedSets[i][j+1]))
+        if(inspectHeirarchy(separatedSets[i][j]).levelCode === 'S'){
+          orderNum = 0
+          newTransactions[i] = inspectHeirarchy(separatedSets[i][j])
+          console.log(newTransactions[i].levelCode)
+          currentTransaction = i
+          _.extend(newTransactions[i], getDetails(separatedSets[i], j+1))
+        }
+        if(inspectHeirarchy(separatedSets[i][j]).levelCode === 'O'){
+          currentOrder = 'order' + orderNum.toString()
+          newTransactions[i][currentOrder] = inspectHeirarchy(separatedSets[i][j])
+          console.log(newTransactions[i][currentOrder].levelCode)
+          _.extend(newTransactions[i][currentOrder], getDetails(separatedSets[i], j+1))
+          orderNum++
+        }
+        if(inspectHeirarchy(separatedSets[i][j]).levelCode === 'P'){
+          currentPack = 'pack' + packNum.toString()          
+          newTransactions[i][currentOrder][currentPack] = inspectHeirarchy(separatedSets[i][j])
+          console.log(newTransactions[i][currentOrder][currentPack].levelCode)
+          getDetails(separatedSets[i], j+1)
+          packNum++
+        }
+        if(inspectHeirarchy(separatedSets[i][j]).levelCode === 'I'){
+          currentItem = 'item' + itemNum.toString()          
+          newTransactions[i][currentOrder][currentPack][currentItem] = inspectHeirarchy(separatedSets[i][j])
+          console.log(newTransactions[i][currentOrder][currentPack][currentItem].levelCode)
+          getDetails(separatedSets[i], j+1)
+          itemNum++
+        }
       }
     }
     
   }
-  console.log(inspect(newTransactions, {depth: 3}))
+  console.log(inspect(newTransactions, {depth: 4}))
+}
+
+function inspectHeirarchy(line){
+  return parser.parse(line)
+}
+
+function getDetails(data, start){
+  var newObject = {};
+  for(var i = start; ((parser.getSegment(data[i]) !== 'HL') && (parser.getSegment(data[i]) !== 'SE')); i++){
+    if(parser.parse(data[i])){
+      _.extend(newObject, parser.parse(data[i]))
+    }
+  }
+  return newObject
 }
 
 function separate(data, sets){
@@ -44,12 +87,12 @@ function getSets(data, start, end){
   var sets = []
   var count = 0, started = false;
    for(var i = 0; i < data.length; i++){
-     if((parser.test(data[i]) === start) && (started === false)){
+     if((data[i].split('*')[0].trim() === start) && (started === false)){
        sets[count] = {}
        sets[count].start = i
        started = true
      }else if((data[i].split('*')[0].trim() === end) && (started === true) && (i !== sets[count].start)){
-       if(parser.getSegment(data[i]) === 'HL'){
+       if(data[i].split('*')[0].trim() === 'HL'){
          sets[count].end = i-1
        }else{
          sets[count].end = i         
