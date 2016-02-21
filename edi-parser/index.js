@@ -12,9 +12,9 @@ var fs = require('fs'),
    this.transactionalSets = []
    this.functionalGroups = []
    this.object = {
-     invoices: [],
-     salesCatalog: [],
-     manifest: []
+     invoices: {},
+     salesCatalog: {},
+     manifest: {}
    }
  }
  EDI.prototype.loadData = function(string){
@@ -23,7 +23,7 @@ var fs = require('fs'),
    this.getHeaders()
    this.getFunctionalGroups()
    this.getSets()
-   processGroups(this.lines, this.functionalGroups)
+   processGroups(this.lines, this.functionalGroups, this.object)
  }
  
  EDI.prototype.getLines = function(){
@@ -43,7 +43,7 @@ var fs = require('fs'),
  }
  
  EDI.prototype.getObject = function(){
-   console.log(this.object)
+   console.log(inspect(this.object, {depth: 5}))
  }
  
  
@@ -94,10 +94,12 @@ EDI.prototype.getHeaders = function(){
   }
 }
 
-function processGroups(lines, groups){
+function processGroups(lines, groups, groupObject){
   for(var i=0; i<groups.length; i++){
-    //Add one because we need the GE line.
-    processor(lines.splice(groups[i].start, (groups[i].end - groups[i].start+1)))
+    if(parser.parse(lines[groups[i].start]).transactionCode === 'SH'){
+      groupObject.manifest.headers = _.extend(parser.parse(lines[groups[i].start]), parser.parse(lines[groups[i].end+1]))
+      groupObject.manifest.data = processor(lines.splice(groups[i].start, (groups[i].end - groups[i].start+1)))
+    }
   }
 }
  module.exports = EDI

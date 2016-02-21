@@ -15,21 +15,19 @@ function processManifest(data){
     transactions[i] = {}
     transactions[i].headers = getLines(separatedSets[i], headerLines)
   }
-  getHeirarchies(separatedSets)
+  return getHeirarchies(separatedSets)
 }
 
 function getHeirarchies(separatedSets){
   var newTransactions = [];
-  var currentType = '', currentTransaction, currentOrder, currentPack, currentItem;
+  var currentType = '';
   var orderNum = 0, packNum = 0, itemNum = 0;
-  var currentShipment
   for (var i = 0;i<separatedSets.length; i++){
     for(var j=0;j<separatedSets[i].length; j++){
       if(parser.getSegment(separatedSets[i][j]) === 'HL'){
         if(parser.parse(separatedSets[i][j]).levelCode === 'S'){
           orderNum = 0
           newTransactions[i] = _.extend(parser.parse(separatedSets[i][j]), {orders: []})
-          currentTransaction = i
           _.extend(newTransactions[i], getDetails(separatedSets[i], j+1))
         }
         if(parser.parse(separatedSets[i][j]).levelCode === 'O'){
@@ -40,7 +38,6 @@ function getHeirarchies(separatedSets){
         }
         if(parser.parse(separatedSets[i][j]).levelCode === 'P'){
           itemNum = 0
-          currentPack = 'pack' + packNum.toString()          
           newTransactions[i].orders[orderNum-1].packs[packNum] = _.extend(parser.parse(separatedSets[i][j]), {items: []})
           _.extend(newTransactions[i].orders[orderNum-1].packs[packNum], getDetails(separatedSets[i], j+1))
           packNum++
@@ -54,7 +51,7 @@ function getHeirarchies(separatedSets){
     }
     
   }
-  console.log(inspect(newTransactions, {depth: 7}))
+  return newTransactions
 }
 
 function inspectHeirarchy(line){
