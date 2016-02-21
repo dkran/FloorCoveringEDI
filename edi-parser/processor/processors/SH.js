@@ -22,42 +22,39 @@ function getHeirarchies(separatedSets){
   var newTransactions = [];
   var currentType = '', currentTransaction, currentOrder, currentPack, currentItem;
   var orderNum = 0, packNum = 0, itemNum = 0;
+  var currentShipment
   for (var i = 0;i<separatedSets.length; i++){
     for(var j=0;j<separatedSets[i].length; j++){
       if(parser.getSegment(separatedSets[i][j]) === 'HL'){
-        if(inspectHeirarchy(separatedSets[i][j]).levelCode === 'S'){
+        if(parser.parse(separatedSets[i][j]).levelCode === 'S'){
           orderNum = 0
-          newTransactions[i] = inspectHeirarchy(separatedSets[i][j])
-          console.log(newTransactions[i].levelCode)
+          newTransactions[i] = _.extend(parser.parse(separatedSets[i][j]), {orders: []})
           currentTransaction = i
           _.extend(newTransactions[i], getDetails(separatedSets[i], j+1))
         }
-        if(inspectHeirarchy(separatedSets[i][j]).levelCode === 'O'){
-          currentOrder = 'order' + orderNum.toString()
-          newTransactions[i][currentOrder] = inspectHeirarchy(separatedSets[i][j])
-          console.log(newTransactions[i][currentOrder].levelCode)
-          _.extend(newTransactions[i][currentOrder], getDetails(separatedSets[i], j+1))
+        if(parser.parse(separatedSets[i][j]).levelCode === 'O'){
+          packNum = 0
+          newTransactions[i].orders[orderNum] = _.extend(parser.parse(separatedSets[i][j]), {packs: []})
+          _.extend(newTransactions[i].orders[orderNum], getDetails(separatedSets[i], j+1))
           orderNum++
         }
-        if(inspectHeirarchy(separatedSets[i][j]).levelCode === 'P'){
+        if(parser.parse(separatedSets[i][j]).levelCode === 'P'){
+          itemNum = 0
           currentPack = 'pack' + packNum.toString()          
-          newTransactions[i][currentOrder][currentPack] = inspectHeirarchy(separatedSets[i][j])
-          console.log(newTransactions[i][currentOrder][currentPack].levelCode)
-          getDetails(separatedSets[i], j+1)
+          newTransactions[i].orders[orderNum-1].packs[packNum] = _.extend(parser.parse(separatedSets[i][j]), {items: []})
+          _.extend(newTransactions[i].orders[orderNum-1].packs[packNum], getDetails(separatedSets[i], j+1))
           packNum++
         }
-        if(inspectHeirarchy(separatedSets[i][j]).levelCode === 'I'){
-          currentItem = 'item' + itemNum.toString()          
-          newTransactions[i][currentOrder][currentPack][currentItem] = inspectHeirarchy(separatedSets[i][j])
-          console.log(newTransactions[i][currentOrder][currentPack][currentItem].levelCode)
-          getDetails(separatedSets[i], j+1)
+        if(parser.parse(separatedSets[i][j]).levelCode === 'I'){
+          newTransactions[i].orders[orderNum-1].packs[packNum-1].items[itemNum] = parser.parse(separatedSets[i][j])
+          _.extend(newTransactions[i].orders[orderNum-1].packs[packNum-1].items[itemNum], getDetails(separatedSets[i], j+1))
           itemNum++
         }
       }
     }
     
   }
-  console.log(inspect(newTransactions, {depth: 4}))
+  console.log(inspect(newTransactions, {depth: 7}))
 }
 
 function inspectHeirarchy(line){
