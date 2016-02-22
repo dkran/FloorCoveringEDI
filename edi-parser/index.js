@@ -43,7 +43,7 @@ var fs = require('fs'),
  }
  
  EDI.prototype.getObject = function(){
-   console.log(inspect(this.object, {depth: 5}))
+   console.log(inspect(this.object, {depth: 9}))
  }
  
  
