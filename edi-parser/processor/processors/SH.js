@@ -20,7 +20,6 @@ function processManifest(data){
 
 function getHeirarchies(separatedSets){
   var newTransactions = [];
-  var currentType = '';
   var orderNum = 0, packNum = 0, itemNum = 0;
   for (var i = 0;i<separatedSets.length; i++){
     for(var j=0;j<separatedSets[i].length; j++){
@@ -113,10 +112,4 @@ function getLines(data, lines){
     }
   }
   return processed
-}
-
-function getType(line){
-  if(!line.split('*').trim()){
-    
-  }
 }
