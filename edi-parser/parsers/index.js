@@ -3,16 +3,22 @@
 var _ = require('lodash'),
   fs = require('fs'),
   inspect = require('util').inspect;
-
+var segmentProcessors = segmentProcessors = {}
 module.exports.parse = processLine
 module.exports.test = test
 module.exports.getSegment = getSegment
+module.exports.segment = segmentProcessors
 
 var filter = {};
 
 var filterFiles = fs.readdirSync('edi-parser/parsers/keys/')
 filterFiles.forEach(function(file){
   filter[file.replace('.js', '')] = require('./keys/' + file.replace('.js', ''))
+})
+
+var segmentFiles = fs.readdirSync('edi-parser/parsers/segmentProcessors/')
+segmentFiles.forEach(function(file){
+  segmentProcessors[file.replace('.js', '')] = require('./segmentProcessors/' + file.replace('.js', ''))
 })
 
 function processLine(line){

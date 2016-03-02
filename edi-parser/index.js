@@ -43,7 +43,9 @@ var fs = require('fs'),
  }
  
  EDI.prototype.getObject = function(){
-   console.log(inspect(this.object, {depth: 9}))
+   console.log(parser)
+   parser.segment['LIN'](this.object)
+   //console.log(inspect(this.object, {depth: 9}))
  }
  
  
