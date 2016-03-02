@@ -31,7 +31,7 @@ function processLine(line){
         throw new TypeError('Not valid '+ key +'  line') 
       }else{
       for(var i=0, j=segments.length; i<j; i++){
-        if(filter[key]){
+        if(filter[key] && (segments[i].trim() !== '')){
           slice[filter[key][i]] = segments[i].trim()        
         }
       }
