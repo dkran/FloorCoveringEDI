@@ -6,6 +6,7 @@ var fs = require('fs'),
  
  
  var EDI = function(){
+   this.lineTerminator = '\r'
    this.file = ''
    this.lines = []
    this.segments = []
@@ -27,7 +28,7 @@ var fs = require('fs'),
  }
  
  EDI.prototype.getLines = function(){
-   this.lines = this.file.split('\r')
+   this.lines = this.file.split(this.lineTerminator)
    for(var i = 0; i<this.lines.length; i++){
      this.segments[i] = '';
      this.segments[i] += this.getSegment(this.lines[i])
@@ -37,9 +38,10 @@ var fs = require('fs'),
  EDI.prototype.getSegment = function(line){
   if(line){
    return line.split('*')[0].trim()
-  }else{
+  }/*else{
+    console.log('line: ' + line)
     throw new Error('Segment fucked')
-  }
+  }*/
  }
  
  EDI.prototype.getObject = function(){
@@ -52,11 +54,11 @@ var fs = require('fs'),
  EDI.prototype.getSets = function(){
    var count = 0, started = false;
    for(var i = 0; i < this.lines.length; i++){
-     if((this.lines[i].split('*')[0].trim() === 'ST') && (started === false)){
+     if((parser.getSegment(this.lines[i]) === 'ST') && (started === false)){
        this.transactionalSets[count] = {}
        this.transactionalSets[count].start = i
        started = true
-     }else if((this.lines[i].split('*')[0].trim() === 'SE') && (started === true)){
+     }else if((parser.getSegment(this.lines[i]) === 'SE') && (started === true)){
        this.transactionalSets[count].end = i
        started = false
        count++
@@ -66,11 +68,11 @@ var fs = require('fs'),
  EDI.prototype.getFunctionalGroups = function(){
    var count = 0, started = false;
    for(var i = 0; i < this.lines.length; i++){
-     if((this.lines[i].split('*')[0].trim() === 'GS') && (started === false)){
+     if((parser.getSegment(this.lines[i]) === 'GS') && (started === false)){
        this.functionalGroups[count] = {}
        this.functionalGroups[count].start = i
        started = true
-     }else if(( this.lines[i].split('*')[0].trim() === 'GE') && (started === true)){
+     }else if((parser.getSegment(this.lines[i]) === 'GE') && (started === true)){
        this.functionalGroups[count].end = i
        started = false
        count++
@@ -96,6 +98,12 @@ EDI.prototype.getHeaders = function(){
   }
 }
 
+EDI.prototype.setTerminator = function(character){
+  if(character){
+    this.lineTerminator = character
+  }
+}
+
 function processGroups(lines, groups, groupObject){
   for(var i=0; i<groups.length; i++){
     if(parser.parse(lines[groups[i].start]).transactionCode === 'SH'){
@@ -104,4 +112,6 @@ function processGroups(lines, groups, groupObject){
     }
   }
 }
+
+
  module.exports = EDI
