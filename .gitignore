@@ -2,7 +2,8 @@ mohawk.sublime-workspace
 mohawk.sublime-project
 .vscode/
 node_modules
-util/ftpConfig/
+util/ftpConfig/mohawk.js
+util/ftpConfig/shaw.js
 util/ftp.js
 util/thinky.js
 EDI/*
