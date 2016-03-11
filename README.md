@@ -1,4 +1,4 @@
-###Mohawk EDI Syncing / Parsing
+###Javscript Floor Covering EDI
 ---
 #Syncing
 This program is to download the daily EDI files from floor covering (or possibly any, untested) EDI servers.
