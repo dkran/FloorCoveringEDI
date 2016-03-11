@@ -1,5 +1,6 @@
 // node samples/sample.js
-var EDI = require('./edi-parser')
+var EDI = require('./edi-parser'),
+  servers = require('./util/ftp');
 
 var edi = new EDI()
 edi.setTerminator('\n')

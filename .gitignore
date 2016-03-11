@@ -4,7 +4,6 @@ mohawk.sublime-project
 node_modules
 util/ftpConfig/mohawk.js
 util/ftpConfig/shaw.js
-util/ftp.js
 util/thinky.js
 EDI/*
 npm-debug.log
