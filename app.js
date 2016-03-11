@@ -86,9 +86,6 @@ function operate(){
         operate()
       }else{
         quit().then(function(data){
-          local = servers[i].local
-          remote = servers[i].remote
-          localFiles = fs.readdirSync(local)
           console.log('All Done!')
         })
         
