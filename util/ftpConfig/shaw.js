@@ -3,10 +3,10 @@ module.exports = {
     host: 'shawedi.shawfloors.com',
     port: 21,
     user: 'edi03887',
-    pass: 'aff829',
-    local: 'EDI/shaw/Outbox/',
-    remote: 'Outbox/'
+    pass: 'aff829'
   },
   lineTerminator: '\n',
-  segmentTerminator: '*'
+  segmentTerminator: '*',
+  local: 'EDI/shaw/Outbox/',
+  remote: 'Outbox/'
 }
