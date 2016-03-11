@@ -6,7 +6,7 @@ var fs = require('fs'),
  
  
  var EDI = function(){
-   this.lineTerminator = '\r'
+   this.lineTerminator = '\n'
    this.file = ''
    this.lines = []
    this.segments = []
@@ -31,19 +31,19 @@ var fs = require('fs'),
    this.lines = this.file.split(this.lineTerminator)
    for(var i = 0; i<this.lines.length; i++){
      this.segments[i] = '';
-     this.segments[i] += this.getSegment(this.lines[i])
+     this.segments[i] += parser.getSegment(this.lines[i])
    }
  }
-
+/*
  EDI.prototype.getSegment = function(line){
   if(line){
    return line.split('*')[0].trim()
-  }/*else{
+  }else{
     console.log('line: ' + line)
     throw new Error('Segment fucked')
-  }*/
+  }
  }
- 
+ */
  EDI.prototype.getObject = function(){
    console.log(parser)
    parser.segment['LIN'](this.object)
@@ -85,10 +85,10 @@ EDI.prototype.getHeaders = function(){
   var started = false, ended = false;
   this.object.headers = {}
   for(var i = 0; i < this.lines.length; i++){
-     if((this.lines[i].split('*')[0].trim() === 'ISA') && (started === false)){
+     if((parser.parse(this.lines[i]) === 'ISA') && (started === false)){
        started = true
        this.object.headers.ISA = parser.parse(this.lines[i], this.segments[i])
-     }else if((this.lines[i].split('*')[0].trim() === 'IEA') && (started === true)){
+     }else if((parser.parse(this.lines[i]) === 'IEA') && (started === true)){
        this.object.headers.IEA = parser.parse(this.lines[i], this.segments[i])
        ended = true
      }
@@ -98,9 +98,15 @@ EDI.prototype.getHeaders = function(){
   }
 }
 
-EDI.prototype.setTerminator = function(character){
+EDI.prototype.setLineTerminator = function(character){
   if(character){
     this.lineTerminator = character
+    parser.lineTerminator(character)
+  }
+}
+EDI.prototype.setSegmentTerminator = function(character){
+  if(character){
+    parser.segmentTerminator(character)
   }
 }
 

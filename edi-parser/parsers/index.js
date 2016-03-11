@@ -8,8 +8,21 @@ module.exports.parse = processLine
 module.exports.test = test
 module.exports.getSegment = getSegment
 module.exports.segment = segmentProcessors
+module.exports.lineTerminator = lineTerminator
+module.exports.segmentTerminator = segmentTerminator
+
+var endSegment = ''
+var endLine = ''
 
 var filter = {};
+
+function lineTerminator(character){
+  if(character) endSegment = character 
+}
+
+function segmentTerminator(character){
+  if(character) endSegment = character
+}
 
 var filterFiles = fs.readdirSync('edi-parser/parsers/keys/')
 filterFiles.forEach(function(file){

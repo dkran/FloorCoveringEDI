@@ -2,8 +2,14 @@
 var EDI = require('./edi-parser'),
   servers = require('./util/ftp');
 
+
+function process(newFiles){
+  
+}
+
 var edi = new EDI()
-edi.setTerminator('\n')
+edi.setLineTerminator('\n')
+edi.setSegmentTerminator('*')
 edi.loadData('EDI/shaw/Outbox/000000037.856')
 
 //console.log('Lines: \r'+edi.lines)
