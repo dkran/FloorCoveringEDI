@@ -72,6 +72,7 @@ function operate(){
         }else{
           quit().then(function(data){
             console.log('All Done!')
+            process.exit()
           })
         }
       })
@@ -87,6 +88,7 @@ function operate(){
       }else{
         quit().then(function(data){
           console.log('All Done!')
+          process.exit()
         })
         
       }
