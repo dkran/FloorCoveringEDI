@@ -3,7 +3,8 @@ var parser = require('../../parsers'),
   _ = require('lodash'),
   items = [];
 
-module.exports = processManifest
+module.exports.process = processManifest
+module.exports.type = 856
 
 
 function processManifest(data){

@@ -1,6 +1,6 @@
 var fs = require('fs'),
   parser = require('./parsers/'),
-  processor = require('./processor'),
+  process = require('./processor'),
   inspect = require('util').inspect,
   _ = require('lodash');
  
@@ -45,7 +45,6 @@ var fs = require('fs'),
  }
  */
  EDI.prototype.getObject = function(){
-   console.log(parser)
    parser.segment['LIN'](this.object)
    //console.log(inspect(this.object, {depth: 9}))
  }
@@ -114,7 +113,7 @@ function processGroups(lines, groups, groupObject){
   for(var i=0; i<groups.length; i++){
     if(parser.parse(lines[groups[i].start]).transactionCode === 'SH'){
       groupObject.manifest.headers = _.extend(parser.parse(lines[groups[i].start]), parser.parse(lines[groups[i].end+1]))
-      groupObject.manifest.data = processor(lines.splice(groups[i].start, (groups[i].end - groups[i].start+1)))
+      groupObject.manifest.data = process(lines.splice(groups[i].start, (groups[i].end - groups[i].start+1)))
     }
   }
 }

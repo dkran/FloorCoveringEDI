@@ -10,7 +10,7 @@ var group = {}
 
 function processGroup(data){
   initialize(data)
-  return processors[group.info.GS.transactionCode](data.splice(1, data.length-2))
+  return processors[group.info.GS.transactionCode].process(data.splice(1, data.length-2))
 }
 
 function initialize(data){
