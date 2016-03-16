@@ -65,6 +65,7 @@ function operate(){
         console.log('Done: ' + servers[i].server.host)
         i++
         if(servers[i]){
+          ftp = new JSFtp(servers[i].server)
           local = servers[i].local
           remote = servers[i].remote
           localFiles = fs.readdirSync(local)
@@ -83,6 +84,7 @@ function operate(){
         ftp = new JSFtp(servers[i].server)
         local = servers[i].local
         remote = servers[i].remote
+        
         localFiles = fs.readdirSync(local)
         operate()
       }else{
