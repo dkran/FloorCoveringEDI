@@ -4,7 +4,9 @@ var parser = require('../../parsers'),
   items = [];
 
 module.exports.process = processManifest
-module.exports.type = 856
+module.exports.type = { abbreviation: 'SH',
+                        name: 'Shipping Manifest',
+                        standard: 856}
 
 
 function processManifest(data){
