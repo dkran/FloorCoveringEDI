@@ -13,7 +13,6 @@ var JSFtp = require('jsftp'),
  *  newFiles will be resolved with a list of hostnames as the keys, and new files in 
  *  that hostname as an array, and an error list too.
 */ 
-console.log(servers)
 
 var i = 0,
   ftp = new JSFtp(servers[i].server),
@@ -32,89 +31,78 @@ servers.forEach(function(server){
   newFiles.errors[server.server.host] = []
 })
 
-console.log(newFiles)
+function gatherFiles(dir){
+  return new Promise(function(resolve, reject){
+    ftp.ls(dir + '*', function(err, res) {
+    if (err) reject(err)
+    var remoteFiles = [];
+    res.forEach(function(file){
+      if((localFiles.indexOf(file.name) < 0) && (file.name !== 'Archive')) remoteFiles.push(file.name)
+    });
+    resolve(remoteFiles)
+    })
+  })
+}
+function downloadNew(files){
+  return new Promise(function(resolve, reject){
+    async.mapLimit(files, 1, function(file, callback){
+    ftp.get(remote + file, local + file, function(err){
+      if(err){
+        newFiles.errors[servers[i].server.host].push(servers[i].server.host + ':' +
+        servers[i].server.port + '/' + servers[i].remote + file)
+        callback(err)
+      }else{
+      console.log(file)
+      newFiles[servers[i].server.host].push(file)
+      callback()
+      }
+    })
+    }, function(err, res){
+      if(err){
+        reject(err)
+      }
+      resolve()
+    })
+  })
+}
+function quit(){
+  return new Promise(function(resolve, reject){
+    ftp.raw.quit(function(err, data){
+      if (err) reject(err)  
+        resolve(data)
+    })
+  })
+}
+
 function operate(){
   return new Promise(function(resolve, reject){
-    function gatherFiles(dir){
-    return new Promise(function(resolve, reject){
-      ftp.ls(dir + '*', function(err, res) {
-      if (err) reject(err)
-      var remoteFiles = [];
-      res.forEach(function(file){
-        if((localFiles.indexOf(file.name) < 0) && (file.name !== 'Archive')) remoteFiles.push(file.name)
-      });
-      resolve(remoteFiles)
-      })
-    })
-    }
-
-    function downloadNew(files){
-      return new Promise(function(resolve, reject){
-        async.mapLimit(files, 1, function(file, callback){
-        ftp.get(remote + file, local + file, function(err){
-          if(err){
-            newFiles.errors[servers[i].server.host].push(servers[i].server.host + ':' +
-            servers[i].server.port + '/' + servers[i].remote + file)
-            callback(err)
-          }else{
-          console.log(file)
-          newFiles[servers[i].server.host].push(file)
-          callback()
-          }
-        })
-        }, function(err, res){
-          if(err){
-            reject(err)
-          }
-          resolve()
-        })
-      })
-    }
-  
-    function quit(){
-      return new Promise(function(resolve, reject){
-        ftp.raw.quit(function(err, data){
-          if (err) reject(err)  
-            resolve(data)
-        })
-      })
+    if(servers[i]){
+      if(i!== 0) ftp = new JSFtp(servers[i].server)
+      local = servers[i].local
+      remote = servers[i].remote
+      localFiles = fs.readdirSync(local)
+    }else{
+      console.log('trying to resolve')
+      console.log(newFiles)
+      resolve(newFiles)
     }
     gatherFiles(remote).then(function(files){
       if(files.length>0){
         downloadNew(files).then(function(){
           console.log('Done: ' + servers[i].server.host)
           i++
-          if(servers[i]){
-            ftp = new JSFtp(servers[i].server)
-            local = servers[i].local
-            remote = servers[i].remote
-            localFiles = fs.readdirSync(local)
-            operate()
-          }else{
-            quit().then(function(data){
-            resolve(newFiles)
-            })
-          }
+          operate()
         })
       }else{
         console.log('No updates: ' + servers[i].server.host)
         i++
-        if(servers[i]){
-          ftp = new JSFtp(servers[i].server)
-          local = servers[i].local
-          remote = servers[i].remote
-          
-          localFiles = fs.readdirSync(local)
-          operate()
-        }else{
-          quit().then(function(data){
-            console.log(newFiles)
-            reject(newFiles)
-          })   
-        }
+        operate()
       }
     })
   })
 }
 
+operate().then(function(res){
+  console.log('then done')
+})
 module.exports = operate
