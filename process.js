@@ -5,7 +5,6 @@ var EDI = require('./edi-parser'),
 
 processor().then(function(files){
   console.log(files)
-  console.log('then done')
 }).catch(function(err){
   console.log(err)
 })

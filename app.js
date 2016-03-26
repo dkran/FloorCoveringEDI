@@ -48,12 +48,12 @@ function downloadNew(files){
     async.mapLimit(files, 1, function(file, callback){
     ftp.get(remote + file, local + file, function(err){
       if(err){
-        newFiles.errors[servers[i].server.host].push(servers[i].server.host + ':' +
+        newFiles.errors[servers[i].server.host].push(servers[i].server.host + ': ' +
         servers[i].server.port + '/' + servers[i].remote + file)
         callback(err)
       }else{
-      console.log(file)
-      newFiles[servers[i].server.host].push(file)
+        if(servers[i])
+          newFiles[servers[i].server.host].push(file)
       callback()
       }
     })
@@ -82,8 +82,6 @@ function operate(){
       remote = servers[i].remote
       localFiles = fs.readdirSync(local)
     }else{
-      console.log('trying to resolve')
-      console.log(newFiles)
       resolve(newFiles)
     }
     gatherFiles(remote).then(function(files){
@@ -91,18 +89,15 @@ function operate(){
         downloadNew(files).then(function(){
           console.log('Done: ' + servers[i].server.host)
           i++
-          operate()
+          resolve(operate())
         })
       }else{
         console.log('No updates: ' + servers[i].server.host)
         i++
-        operate()
+        resolve(operate())
       }
     })
   })
 }
 
-operate().then(function(res){
-  console.log('then done')
-})
 module.exports = operate
