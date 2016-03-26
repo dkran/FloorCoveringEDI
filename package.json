@@ -2,7 +2,7 @@
   "name": "mohawk-ftp-cli",
   "version": "1.0.0",
   "description": "Client for Mohawk Industries EDI ftp mode.",
-  "main": "app.js",
+  "main": "process.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
