@@ -3,7 +3,9 @@ var fs = require('fs'),
   process = require('./processor'),
   inspect = require('util').inspect,
   _ = require('lodash');
+  helpers = require('./helpers')
  
+module.exports.helpers = helpers
  
  var EDI = function(){
    this.lineTerminator = '\n'
