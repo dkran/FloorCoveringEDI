@@ -3,9 +3,6 @@ var fs = require('fs'),
   process = require('./processor'),
   inspect = require('util').inspect,
   _ = require('lodash');
-  helpers = require('./helpers')
- 
-module.exports.helpers = helpers
  
  var EDI = function(){
    this.lineTerminator = '\n'
@@ -19,6 +16,7 @@ module.exports.helpers = helpers
      salesCatalog: {},
      manifest: {}
    }
+   this.helpers = require('./helpers')
  }
  EDI.prototype.loadData = function(string){
    this.file = fs.readFileSync(string, 'utf8')
@@ -119,6 +117,5 @@ function processGroups(lines, groups, groupObject){
     }
   }
 }
-
 
  module.exports = EDI
