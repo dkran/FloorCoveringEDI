@@ -48,8 +48,7 @@ function downloadNew(files){
     async.mapLimit(files, 1, function(file, callback){
     ftp.get(remote + file, local + file, function(err){
       if(err){
-        newFiles.errors[servers[i].server.host].push(servers[i].server.host + ': ' +
-        servers[i].server.port + '/' + servers[i].remote + file)
+        newFiles.errors[servers[i].server.host].push(file)
         callback(err)
       }else{
         if(servers[i])
