@@ -14,22 +14,14 @@ helperFiles.forEach(function(file){
   helperFiles[helperFiles.indexOf(file)] = file.replace('.js', '')
 })
   
-var setupHelpers = function(){
-  return new Promise(function(resolve, reject){
-    console.log(helperFiles)
-    var helpers = {};
-    for(var i=0; i<helperFiles.length; i++){
-      helpers[helperFiles[i]] = require(baseDir + helperFiles[i])
-      if(!helperFiles[i]+1){
-        if(helpers === {}) reject(new Error('Helpers not properly loading, or no helpers'))
-        resolve(helpers)
-      }
-    }
-  })
+var helpers = {};
+for(var i=0; i<helperFiles.length; i++){
+  helpers[helperFiles[i]] = require(baseDir + helperFiles[i])
+  if(!helperFiles[i]+1){
+    if(helpers === {}) reject(new Error('Helpers not properly loading, or no helpers'))
+  }
 }
 
 
+module.exports = helpers
 
-setupHelpers().then(function(helpers){
-  console.log(helpers)
-})
